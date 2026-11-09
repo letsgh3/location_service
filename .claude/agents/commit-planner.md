@@ -101,7 +101,8 @@ OUT=$(git diff --name-only <sha bazy>...HEAD | grep -vE "$ALLOWED")
 Wykonaj commit #N z .agent/plans/<slug>.md. Tylko ten commit.
 1. komenda weryfikacji z tabeli,
 2. git diff --stat, strażnik zakresu,
-3. zielone i w budżecie → commit z komunikatem z planu, git tag cp/N,
+2a. przegląd agentem code-reviewer (zmiany w drzewie roboczym, plan + numer commita); REQUEST_CHANGES → popraw i powtórz 1–2a,
+3. zielone, w budżecie i APPROVE → commit z komunikatem z planu, git tag cp/N,
 4. stop, czekaj na "dalej".
 Odchylenie (nowy plik, >1.5× budżetu) → zgłoś, nie wykonuj.
 ```
