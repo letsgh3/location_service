@@ -180,7 +180,7 @@ Zagnieżdżone `location` jak w `ListingDetail` i w `listings.md` (D1 tamtego pl
 ```bash
 ALLOWED='^(README\.md|services/backend/(main\.py|sql_app/schemas\.py|tests/api/test_listings\.py|README\.md|CLAUDE\.md)|services/frontend/(src/(api\.js|App\.jsx|ListingsView\.jsx|ListingFilters\.jsx)|README\.md)|services/e2e/(tests/(conftest\.py|test_listing_filters\.py)|README\.md))$'
 # Narzędzia agentów commitowane osobno jako chore(agents), poza tabelą planu (zatwierdzone 2026-11-09):
-TOOLING='^(CLAUDE\.md|\.claude/(agents|skills)/.*|\.agent/(plans/listing-filters\.md|reviews/listing-filters-.*\.md))$'
+TOOLING='^(CLAUDE\.md|\.claude/((agents|skills|hooks)/.*|settings\.json)|\.agent/(plans/listing-filters\.md|reviews/listing-filters-.*\.md))$'
 OUT=$(git diff --name-only 953e7de...HEAD | grep -vE "$ALLOWED" | grep -vE "$TOOLING")
 [ -z "$OUT" ] || { echo "Pliki poza zakresem:"; echo "$OUT"; exit 1; }
 ```
