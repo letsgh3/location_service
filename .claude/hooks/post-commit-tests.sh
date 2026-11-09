@@ -28,6 +28,17 @@ case "$subject" in commit*) ;; *) exit 0 ;; esac
 
 head=$(git log -1 --format='%h %s')
 backend="$root/services/backend"
+
+# PreToolUse (pre-commit-tests.sh) już przetestował dokładnie to drzewo services/backend,
+# które weszło do commita: nie powtarzamy testów.
+marker="$(git rev-parse --git-dir)/claude-pretest-ok"
+if [ -f "$marker" ] && [ "$(cat "$marker")" = "$(git rev-parse -q --verify HEAD:services/backend 2>/dev/null)" ]; then
+  rm -f "$marker"
+  jq -n --arg c "post-commit [$head]: pytest -q pominięty, bo hook PreToolUse przetestował identyczne services/backend przed commitem." \
+    '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $c}}'
+  exit 0
+fi
+rm -f "$marker"
 if [ ! -x "$backend/venv/bin/pytest" ]; then
   jq -n --arg c "post-commit [$head]: pominięto pytest -q (brak services/backend/venv; uruchom ./install.sh)." \
     '{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $c}}'
