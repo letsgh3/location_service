@@ -1,8 +1,9 @@
 import jwt
 from sqlalchemy import select, delete, func
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, Query, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from typing import List
 from sql_app.database import get_db
 from sql_app import models, schemas
@@ -181,3 +182,22 @@ async def delete_location(
         delete(models.Location).where(models.Location.location_id == location_id)
     )
     await db.commit()
+
+
+# Listing endpoints
+# Trasy statyczne /listings/<nazwa> muszą być deklarowane przed przyszłym /listings/{listing_id}.
+@app.get("/listings/", response_model=List[schemas.ListingSummary])
+async def read_listings(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=500),
+    db: AsyncSession = Depends(get_db),
+):
+    # selectinload: leniwe ładowanie relacji w sesji async rzuca MissingGreenlet.
+    result = await db.execute(
+        select(models.Listing)
+        .options(selectinload(models.Listing.location))
+        .order_by(models.Listing.listing_id)
+        .offset(skip)
+        .limit(limit)
+    )
+    return result.scalars().all()
