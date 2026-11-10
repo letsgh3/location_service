@@ -26,6 +26,8 @@ sql_app.db
 .pytest_cache/
 .coverage
 coverage.xml
+# Testy mutacyjne (mutmut)
+mutants/
 htmlcov/
 .mypy_cache/
 .ruff_cache/
