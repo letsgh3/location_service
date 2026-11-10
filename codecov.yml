@@ -1,0 +1,35 @@
+# codecov.yml - konfiguracja Codecov (https://docs.codecov.com/docs/codecov-yaml).
+# Raport coverage.xml wysyła job backend-tests z .github/workflows/tests.yml.
+codecov:
+  require_ci_to_pass: true
+
+coverage:
+  precision: 2
+  round: down
+  status:
+    # codecov/project: całe pokrycie backendu nie może spaść poniżej 80%
+    # (ten sam próg co --cov-fail-under w workflow).
+    project:
+      default:
+        target: 80%
+        flags:
+          - backend
+    # codecov/patch: linie zmienione w PR muszą mieć co najmniej 90% pokrycia.
+    # Ten status ustawia się jako wymagany check w branch protection.
+    patch:
+      default:
+        target: 90%
+        threshold: 0%
+        flags:
+          - backend
+
+flags:
+  backend:
+    paths:
+      - services/backend/
+    carryforward: false
+
+comment:
+  layout: "header, diff, flags, files"
+  behavior: default
+  require_changes: false
